@@ -9,6 +9,7 @@ export default defineConfig({
     plugins: [tailwindcss()],
   }),
   manifest: {
+    name: "Blockie | Block Websites & Be Productive",
     permissions: ["storage", "tabs", "webNavigation"],
   },
 });

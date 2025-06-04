@@ -34,6 +34,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import logo from "@/assets/logo_horizontal.png";
 
 const data = {
   user: {
@@ -130,9 +131,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               asChild
               className="data-[slot=sidebar-menu-button]:!p-1.5"
             >
-              <a href="#">
-                <IconInnerShadowTop className="!size-5" />
-                <span className="text-base font-semibold">Acme Inc.</span>
+              <a
+                href="#"
+                className="w-[120px] h-[56px] text-left flex justify-start"
+              >
+                <img
+                  src={logo}
+                  alt="Blockie"
+                  className="h-full object-contain"
+                />
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>

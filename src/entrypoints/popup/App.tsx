@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
 import { db } from "@/db/blocked-sites-db";
 import { normalizeUrl } from "@/lib/utils";
+import { ThemeProvider } from "@/components/theme-provider";
 
 function App() {
   const [currentUrl, setCurrentUrl] = useState<string | null>(null);
@@ -141,80 +142,82 @@ function App() {
 
   // Main UI
   return (
-    <div className="flex flex-col w-[360px] min-h-[220px] bg-background  overflow-hidden  transition-all duration-300 animate-in fade-in-50 slide-in-from-top-2">
-      {/* Header */}
-      <div
-        className={`px-6 pt-6 pb-4 transition-colors duration-300 ${
-          isBlocked
-            ? "bg-green-50 dark:bg-green-900/20 border-b border-green-100 dark:border-green-900/30"
-            : "bg-blue-50 dark:bg-blue-900/10 border-b border-blue-100 dark:border-blue-900/30"
-        }`}
-      >
-        <div className="flex items-start gap-4">
-          <div
-            className={`p-2.5 rounded-xl transition-all duration-300 ${
-              isBlocked
-                ? "bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400"
-                : "bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400"
-            }`}
-          >
-            {isBlocked ? (
-              <ShieldOff className="h-6 w-6" />
-            ) : (
-              <Shield className="h-6 w-6" />
-            )}
-          </div>
-          <div className="flex-1">
-            <h2 className="font-semibold text-lg text-foreground mb-1">
-              {isBlocked ? "Site is Blocked" : "Block This Site?"}
-            </h2>
-            <p className="text-sm text-muted-foreground truncate">
-              {currentUrl ? new URL(currentUrl).hostname : ""}
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Content */}
-      <div className="p-6 pt-5">
-        <div className="space-y-4">
-          {!isBlocked && (
-            <Button
-              onClick={handleBlockSite}
-              disabled={isBlocking}
-              size="lg"
-              className={`w-full h-12 text-base font-medium transition-all duration-300 transform hover:scale-[1.02] ${
-                isBlocking ? "opacity-80" : "hover:shadow-md"
+    <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
+      <div className="flex flex-col w-[360px] min-h-[220px] bg-background  overflow-hidden  transition-all duration-300 animate-in fade-in-50 slide-in-from-top-2">
+        {/* Header */}
+        <div
+          className={`px-6 pt-6 pb-4 transition-colors duration-300 ${
+            isBlocked
+              ? "bg-green-50 dark:bg-green-900/20 border-b border-green-100 dark:border-green-900/30"
+              : "bg-blue-50 dark:bg-blue-900/10 border-b border-blue-100 dark:border-blue-900/30"
+          }`}
+        >
+          <div className="flex items-start gap-4">
+            <div
+              className={`p-2.5 rounded-xl transition-all duration-300 ${
+                isBlocked
+                  ? "bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400"
+                  : "bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400"
               }`}
             >
-              {isBlocking ? (
-                <>
-                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                  Blocking...
-                </>
+              {isBlocked ? (
+                <ShieldOff className="h-6 w-6" />
               ) : (
-                <>
-                  <Shield className="mr-2 h-5 w-5" />
-                  Block This Site
-                </>
+                <Shield className="h-6 w-6" />
               )}
-            </Button>
-          )}
-
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={openOptions}
-            className="w-full h-10 text-sm font-normal transition-colors hover:bg-accent/50"
-          >
-            <Settings className="h-4 w-4 mr-2 opacity-70" />
-            Manage Blocked Sites
-          </Button>
+            </div>
+            <div className="flex-1">
+              <h2 className="font-semibold text-lg text-foreground mb-1">
+                {isBlocked ? "Site is Blocked" : "Block This Site?"}
+              </h2>
+              <p className="text-sm text-muted-foreground truncate">
+                {currentUrl ? new URL(currentUrl).hostname : ""}
+              </p>
+            </div>
+          </div>
         </div>
-      </div>
 
-      <Toaster position="top-center" />
-    </div>
+        {/* Content */}
+        <div className="p-6 pt-5">
+          <div className="space-y-4">
+            {!isBlocked && (
+              <Button
+                onClick={handleBlockSite}
+                disabled={isBlocking}
+                size="lg"
+                className={`w-full h-12 text-base font-medium transition-all duration-300 transform hover:scale-[1.02] ${
+                  isBlocking ? "opacity-80" : "hover:shadow-md"
+                }`}
+              >
+                {isBlocking ? (
+                  <>
+                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                    Blocking...
+                  </>
+                ) : (
+                  <>
+                    <Shield className="mr-2 h-5 w-5" />
+                    Block This Site
+                  </>
+                )}
+              </Button>
+            )}
+
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={openOptions}
+              className="w-full h-10 text-sm font-normal transition-colors hover:bg-accent/50"
+            >
+              <Settings className="h-4 w-4 mr-2 opacity-70" />
+              Manage Blocked Sites
+            </Button>
+          </div>
+        </div>
+
+        <Toaster position="top-center" />
+      </div>
+    </ThemeProvider>
   );
 }
 

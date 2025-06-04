@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Site Blocked</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 2rem;
+      text-align: center;
+      color: #1a1a1a;
+      background-color: #f8f9fa;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    .container {
+      background: white;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    h1 {
+      color: #dc3545;
+      margin-bottom: 1rem;
+    }
+    .blocked-url {
+      font-family: monospace;
+      background: #f1f3f5;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      word-break: break-all;
+      margin: 1rem 0;
+    }
+    button {
+      background: #0d6efd;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1rem;
+      margin-top: 1rem;
+    }
+    button:hover {
+      background: #0b5ed7;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #dc3545;">
+      <circle cx="12" cy="12" r="10"></circle>
+      <line x1="12" y1="8" x2="12" y2="12"></line>
+      <line x1="12" y1="16" x2="12.01" y2="16"></line>
+    </svg>
+    <h1>Site Blocked</h1>
+    <p>Access to the following website has been restricted:</p>
+    <div class="blocked-url" id="blockedUrl"></div>
+    <p>This site is on your blocklist. If you believe this is a mistake, you can manage your blocked sites in the extension options.</p>
+    <button id="goToOptions">Manage Blocked Sites</button>
+    <button id="goBack" style="margin-left: 0.5rem;">Go Back</button>
+  </div>
+
+  <script>
+    // Get the blocked URL from the query parameter
+    const params = new URLSearchParams(window.location.search);
+    const blockedUrl = params.get('url');
+    
+    // Display the blocked URL
+    if (blockedUrl) {
+      try {
+        const url = new URL(blockedUrl);
+        document.getElementById('blockedUrl').textContent = url.hostname + url.pathname;
+      } catch (e) {
+        document.getElementById('blockedUrl').textContent = blockedUrl;
+      }
+    }
+
+    // Button event listeners
+    document.getElementById('goToOptions').addEventListener('click', () => {
+      chrome.runtime.sendMessage({ action: 'openOptions' });
+    });
+
+    document.getElementById('goBack').addEventListener('click', () => {
+      window.history.back();
+    });
+  </script>
+</body>
+</html>

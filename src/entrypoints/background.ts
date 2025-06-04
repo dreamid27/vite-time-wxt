@@ -1,4 +1,6 @@
-import { db } from "@/db/blocked-sites-db";
+import { db as blockedSitesDb } from "@/db/blocked-sites-db";
+import { db as blockedWordsDb } from "@/db/blocked-words-db";
+import { normalizeUrl } from "@/lib/utils";
 
 export default defineBackground(() => {
   // Listen for navigation events
@@ -12,10 +14,13 @@ export default defineBackground(() => {
       const hostname = url.hostname.replace("www.", "");
 
       // Get all blocked sites from Dexie
-      const blockedSites = await db.blockedSites.toArray();
+      const blockedSites = await blockedSitesDb.blockedSites.toArray();
+
+      // Get all blocked words from Dexie
+      const blockedWords = await blockedWordsDb.blockedWords.toArray();
 
       // Check if current URL matches any blocked site
-      const isBlocked = blockedSites.some((site) => {
+      const isSiteBlocked = blockedSites.some((site) => {
         const blockedHostname = new URL(
           site.url.startsWith("http") ? site.url : `https://${site.url}`
         ).hostname.replace("www.", "");
@@ -26,6 +31,14 @@ export default defineBackground(() => {
           `www.${hostname}`.endsWith(`.${blockedHostname}`)
         );
       });
+      
+      // Check if current URL contains any blocked word
+      const isWordBlocked = blockedWords.some((blockedWord) => {
+        return hostname.toLowerCase().includes(blockedWord.word.toLowerCase());
+      });
+      
+      // Site is blocked if it matches either a blocked site or contains a blocked word
+      const isBlocked = isSiteBlocked || isWordBlocked;
 
       if (isBlocked) {
         console.log(`Blocking access to: ${details.url}`);

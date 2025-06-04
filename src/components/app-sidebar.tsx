@@ -40,8 +40,13 @@ const data = {
   navMain: [
     {
       title: "Blocked Sites",
-      url: "#",
+      id: "blocked-sites",
       icon: IconDashboard,
+    },
+    {
+      title: "Blocked Words",
+      id: "blocked-words",
+      icon: IconListDetails,
     },
   ],
   navClouds: [

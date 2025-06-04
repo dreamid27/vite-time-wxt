@@ -47,13 +47,15 @@
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-hook-form": "^7.57.0",
+    "react-router-dom": "^7.6.2",
     "recharts": "^2.15.3",
     "sonner": "^2.0.5",
     "tailwind-merge": "^3.3.0",
     "tailwindcss": "^4.1.8",
     "tw-animate-css": "^1.3.3",
     "vaul": "^1.1.2",
-    "zod": "^3.25.49"
+    "zod": "^3.25.49",
+    "zustand": "^5.0.5"
   },
   "devDependencies": {
     "@types/chrome": "^0.0.326",

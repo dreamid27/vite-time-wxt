@@ -3,9 +3,13 @@ import { AppSidebar } from "@/components/app-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { SiteHeader } from "@/components/site-header";
 import { BlockedSites } from "@/components/blocked-sites/blocked-sites";
+import { BlockedWords } from "@/components/blocked-words/blocked-words";
 import { Toaster } from "@/components/ui/sonner";
+import { useNavigationStore } from "@/store/navigation-store";
 
 function App() {
+  const { currentPage } = useNavigationStore();
+
   return (
     <SidebarProvider
       style={
@@ -18,8 +22,18 @@ function App() {
       <AppSidebar variant="inset" />
       <SidebarInset>
         <div className="flex h-screen flex-col">
-          <SiteHeader title="Blocked Sites" />
-          <BlockedSites />
+          {currentPage === 'blocked-sites' && (
+            <>
+              <SiteHeader title="Blocked Sites" />
+              <BlockedSites />
+            </>
+          )}
+          {currentPage === 'blocked-words' && (
+            <>
+              <SiteHeader title="Blocked Words" />
+              <BlockedWords />
+            </>
+          )}
         </div>
       </SidebarInset>
       <Toaster />

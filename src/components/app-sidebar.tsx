@@ -21,6 +21,10 @@ import { NavDocuments } from "@/components/nav-documents";
 import { NavMain } from "@/components/nav-main";
 import { NavSecondary } from "@/components/nav-secondary";
 import { NavUser } from "@/components/nav-user";
+import { Button } from "@/components/ui/button";
+import { MessageSquareText, Sparkles } from "lucide-react";
+import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
 import {
   Sidebar,
   SidebarContent,
@@ -140,7 +144,50 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         {/* <NavSecondary items={data.navSecondary} className="mt-auto" /> */}
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3, duration: 0.5 }}
+        >
+          <div
+            className={cn(
+              "relative overflow-hidden rounded-lg border p-4 shadow-sm transition-all duration-300",
+              "bg-gradient-to-br from-primary/5 to-primary/10",
+              "border-primary/20 hover:border-primary/30",
+              "hover:shadow-md hover:shadow-primary/5"
+            )}
+          >
+            <div className="absolute -right-6 -top-6 h-24 w-24 rounded-full bg-primary/10"></div>
+            <div className="absolute -right-12 -top-12 h-32 w-32 rounded-full bg-primary/5"></div>
+
+            <div className="relative z-10">
+              <div className="mb-2 flex items-center gap-2">
+                <MessageSquareText className="h-4 w-4 text-primary" />
+                <span className="text-sm font-medium text-foreground">
+                  We'd love your feedback!
+                </span>
+              </div>
+              <p className="mb-3 text-xs text-muted-foreground">
+                Help us improve your experience with our extension
+              </p>
+              <Button
+                onClick={() =>
+                  window.open("https://forms.gle/nG2Uuyw23CCsxmjLA", "_blank")
+                }
+                size="sm"
+                variant="outline"
+                className={cn(
+                  "group relative overflow-hidden border-primary/20 bg-background/80 text-xs font-medium",
+                  "hover:bg-primary/5 hover:text-foreground",
+                  "transition-all duration-300"
+                )}
+              >
+                <Sparkles className="mr-1.5 h-3.5 w-3.5 group-hover:scale-110 group-hover:text-primary transition-transform" />
+                Share Feedback
+              </Button>
+            </div>
+          </div>
+        </motion.div>
       </SidebarFooter>
     </Sidebar>
   );

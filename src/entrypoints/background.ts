@@ -1,6 +1,5 @@
 import { db as blockedSitesDb } from "@/db/blocked-sites-db";
 import { db as blockedWordsDb } from "@/db/blocked-words-db";
-import { normalizeUrl } from "@/lib/utils";
 
 export default defineBackground(() => {
   // Listen for navigation events
@@ -31,20 +30,40 @@ export default defineBackground(() => {
           `www.${hostname}`.endsWith(`.${blockedHostname}`)
         );
       });
-      
+
       // Check if current URL contains any blocked word
       const isWordBlocked = blockedWords.some((blockedWord) => {
         return hostname.toLowerCase().includes(blockedWord.word.toLowerCase());
       });
-      
+
       // Site is blocked if it matches either a blocked site or contains a blocked word
       const isBlocked = isSiteBlocked || isWordBlocked;
 
       if (isBlocked) {
         console.log(`Blocking access to: ${details.url}`);
-        // Redirect to a block page or show a notification
+
+        // Determine if it was blocked by a word or site
+        let blockReason = "";
+        let blockedWord = "";
+
+        if (isWordBlocked) {
+          // Find which word caused the block
+          const matchingWord = blockedWords.find((word) =>
+            hostname.toLowerCase().includes(word.word.toLowerCase())
+          );
+          if (matchingWord) {
+            blockedWord = matchingWord.word;
+          }
+        }
+
+        // Redirect to our custom block page with URL and reason parameters
+        const blockedPageUrl =
+          browser.runtime.getURL("/blocked.html") +
+          `?url=${encodeURIComponent(details.url)}` +
+          (blockedWord ? `&word=${encodeURIComponent(blockedWord)}` : "");
+
         await browser.tabs.update(details.tabId, {
-          url: `https://example.com`,
+          url: "https://www.goodreads.com/quotes/tag/positive-affirmations",
         });
       }
     } catch (error) {

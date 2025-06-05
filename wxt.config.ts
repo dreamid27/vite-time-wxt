@@ -10,6 +10,6 @@ export default defineConfig({
   }),
   manifest: {
     name: "Blockie | Block Websites & Be Productive",
-    permissions: ["storage", "tabs", "webNavigation"],
+    permissions: ["tabs", "webNavigation"],
   },
 });

@@ -1,4 +1,4 @@
-import Dexie, { Table } from "dexie";
+import Dexie, { Table } from 'dexie';
 
 export interface BlockedSite {
   id: string; // uuid
@@ -6,13 +6,22 @@ export interface BlockedSite {
   createdAt: string;
 }
 
+export interface PauseState {
+  id: string;
+  startTime: string;
+  duration: number; // in minutes
+  isActive: boolean;
+}
+
 export class BlockedSitesDB extends Dexie {
   blockedSites!: Table<BlockedSite, string>;
+  pauseState!: Table<PauseState, string>;
 
   constructor() {
-    super("BlockedSitesDB");
-    this.version(1).stores({
-      blockedSites: "id, url, createdAt",
+    super('BlockedSitesDB');
+    this.version(2).stores({
+      blockedSites: 'id, url, createdAt',
+      pauseState: 'id, startTime, duration, isActive',
     });
   }
 }

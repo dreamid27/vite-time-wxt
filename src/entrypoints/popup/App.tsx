@@ -1,11 +1,12 @@
-import { useEffect, useState } from "react";
-import { Shield, ShieldOff, Settings, Loader2, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Toaster } from "@/components/ui/sonner";
-import { toast } from "sonner";
-import { db } from "@/db/blocked-sites-db";
-import { normalizeUrl } from "@/lib/utils";
-import { ThemeProvider } from "@/components/theme-provider";
+import { useEffect, useState } from 'react';
+import { Shield, ShieldOff, Settings, Loader2, X } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Toaster } from '@/components/ui/sonner';
+import { toast } from 'sonner';
+import { db } from '@/db/blocked-sites-db';
+import { normalizeUrl } from '@/lib/utils';
+import { ThemeProvider } from '@/components/theme-provider';
+import { PauseControls } from '@/components/pause-controls';
 
 function App() {
   const [currentUrl, setCurrentUrl] = useState<string | null>(null);
@@ -13,6 +14,7 @@ function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [isBlocking, setIsBlocking] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isPaused, setIsPaused] = useState(false);
 
   // Get current tab's URL and check if it's blocked
   useEffect(() => {
@@ -20,6 +22,11 @@ function App() {
       try {
         setIsLoading(true);
         setError(null);
+
+        // Check if blocking is paused
+        const pauseState = await db.pauseState.toArray();
+        const activePause = pauseState.find((state) => state.isActive);
+        setIsPaused(!!activePause);
 
         // Get the current active tab
         const tabs = await new Promise<globalThis.Browser.tabs.Tab[]>(
@@ -35,7 +42,7 @@ function App() {
 
         // Skip if no URL (chrome://, edge://, etc.)
         if (!tabs[0]?.url) {
-          setError("This page cannot be blocked.");
+          setError('This page cannot be blocked.');
           return;
         }
 
@@ -44,7 +51,7 @@ function App() {
 
         // Check if the current URL is already blocked
         const url = new URL(tabUrl);
-        const domain = url.hostname.replace("www.", "");
+        const domain = url.hostname.replace('www.', '');
         const blockedSites = await db.blockedSites.toArray();
         const isSiteBlocked = blockedSites.some((site: { url: string }) =>
           normalizeUrl(site.url).includes(domain)
@@ -52,8 +59,8 @@ function App() {
 
         setIsBlocked(!!isSiteBlocked);
       } catch (err) {
-        console.error("Error checking current site:", err);
-        setError("Failed to check current site. Please try again.");
+        console.error('Error checking current site:', err);
+        setError('Failed to check current site. Please try again.');
       } finally {
         setIsLoading(false);
       }
@@ -70,7 +77,7 @@ function App() {
 
       // Normalize the URL for storage (without protocol)
       const url = new URL(currentUrl);
-      const domain = url.hostname.replace("www.", "");
+      const domain = url.hostname.replace('www.', '');
 
       // Check again if already blocked (race condition protection)
       const blockedSites = await db.blockedSites.toArray();
@@ -93,16 +100,16 @@ function App() {
       setIsBlocked(true);
 
       // Show success message
-      toast.success("Site blocked", {
+      toast.success('Site blocked', {
         description: `${domain} has been added to your blocked list.`,
       });
 
       // Close the popup after a short delay
       setTimeout(() => window.close(), 1500);
     } catch (err) {
-      console.error("Error blocking site:", err);
-      toast.error("Error", {
-        description: "Failed to block this site. Please try again.",
+      console.error('Error blocking site:', err);
+      toast.error('Error', {
+        description: 'Failed to block this site. Please try again.',
       });
     } finally {
       setIsBlocking(false);
@@ -143,24 +150,30 @@ function App() {
   // Main UI
   return (
     <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
-      <div className="flex flex-col w-[360px] min-h-[220px] bg-background  overflow-hidden  transition-all duration-300 animate-in fade-in-50 slide-in-from-top-2">
+      <div className="flex flex-col w-[360px] min-h-[220px] bg-background overflow-hidden transition-all duration-300 animate-in fade-in-50 slide-in-from-top-2">
         {/* Header */}
         <div
           className={`px-6 pt-6 pb-4 transition-colors duration-300 ${
-            isBlocked
-              ? "bg-green-50 dark:bg-green-900/20 border-b border-green-100 dark:border-green-900/30"
-              : "bg-blue-50 dark:bg-blue-900/10 border-b border-blue-100 dark:border-blue-900/30"
+            isPaused
+              ? 'bg-yellow-50 dark:bg-yellow-900/20 border-b border-yellow-100 dark:border-yellow-900/30'
+              : isBlocked
+              ? 'bg-green-50 dark:bg-green-900/20 border-b border-green-100 dark:border-green-900/30'
+              : 'bg-blue-50 dark:bg-blue-900/10 border-b border-blue-100 dark:border-blue-900/30'
           }`}
         >
           <div className="flex items-start gap-4">
             <div
               className={`p-2.5 rounded-xl transition-all duration-300 ${
-                isBlocked
-                  ? "bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400"
-                  : "bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400"
+                isPaused
+                  ? 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400'
+                  : isBlocked
+                  ? 'bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400'
+                  : 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400'
               }`}
             >
-              {isBlocked ? (
+              {isPaused ? (
+                <ShieldOff className="h-6 w-6" />
+              ) : isBlocked ? (
                 <ShieldOff className="h-6 w-6" />
               ) : (
                 <Shield className="h-6 w-6" />
@@ -168,10 +181,14 @@ function App() {
             </div>
             <div className="flex-1">
               <h2 className="font-semibold text-lg text-foreground mb-1">
-                {isBlocked ? "Site is Blocked" : "Block This Site?"}
+                {isPaused
+                  ? 'Blocking Paused'
+                  : isBlocked
+                  ? 'Site is Blocked'
+                  : 'Block This Site?'}
               </h2>
               <p className="text-sm text-muted-foreground truncate">
-                {currentUrl ? new URL(currentUrl).hostname : ""}
+                {currentUrl ? new URL(currentUrl).hostname : ''}
               </p>
             </div>
           </div>
@@ -180,13 +197,15 @@ function App() {
         {/* Content */}
         <div className="p-6 pt-5">
           <div className="space-y-4">
+            <PauseControls onPauseStateChange={setIsPaused} />
+
             {!isBlocked && (
               <Button
                 onClick={handleBlockSite}
                 disabled={isBlocking}
                 size="lg"
                 className={`w-full h-12 text-base font-medium transition-all duration-300 transform hover:scale-[1.02] ${
-                  isBlocking ? "opacity-80" : "hover:shadow-md"
+                  isBlocking ? 'opacity-80' : 'hover:shadow-md'
                 }`}
               >
                 {isBlocking ? (

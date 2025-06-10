@@ -1,5 +1,5 @@
-import { db as blockedSitesDb } from "@/db/blocked-sites-db";
-import { db as blockedWordsDb } from "@/db/blocked-words-db";
+import { db as blockedSitesDb } from '@/db/blocked-sites-db';
+import { db as blockedWordsDb } from '@/db/blocked-words-db';
 
 export default defineBackground(() => {
   // Listen for navigation events
@@ -8,9 +8,29 @@ export default defineBackground(() => {
     if (details.frameId !== 0) return;
 
     try {
-      console.log("Checking navigation to:", details.url);
+      console.log('Checking navigation to:', details.url);
       const url = new URL(details.url);
-      const hostname = url.hostname.replace("www.", "");
+      const hostname = url.hostname.replace('www.', '');
+
+      // Check if blocking is paused
+      const pauseState = await blockedSitesDb.pauseState.toArray();
+      const activePause = pauseState.find((state) => state.isActive);
+
+      if (activePause) {
+        const startTime = new Date(activePause.startTime).getTime();
+        const endTime = startTime + activePause.duration * 60 * 1000;
+        const now = Date.now();
+
+        // If pause has expired, deactivate it
+        if (now >= endTime) {
+          await blockedSitesDb.pauseState.update(activePause.id, {
+            isActive: false,
+          });
+        } else {
+          // If pause is still active, allow navigation
+          return;
+        }
+      }
 
       // Get all blocked sites from Dexie
       const blockedSites = await blockedSitesDb.blockedSites.toArray();
@@ -21,8 +41,8 @@ export default defineBackground(() => {
       // Check if current URL matches any blocked site
       const isSiteBlocked = blockedSites.some((site) => {
         const blockedHostname = new URL(
-          site.url.startsWith("http") ? site.url : `https://${site.url}`
-        ).hostname.replace("www.", "");
+          site.url.startsWith('http') ? site.url : `https://${site.url}`
+        ).hostname.replace('www.', '');
 
         return (
           hostname === blockedHostname ||
@@ -43,8 +63,8 @@ export default defineBackground(() => {
         console.log(`Blocking access to: ${details.url}`);
 
         // Determine if it was blocked by a word or site
-        let blockReason = "";
-        let blockedWord = "";
+        let blockReason = '';
+        let blockedWord = '';
 
         if (isWordBlocked) {
           // Find which word caused the block
@@ -58,33 +78,33 @@ export default defineBackground(() => {
 
         // Redirect to our custom block page with URL and reason parameters
         const blockedPageUrl =
-          browser.runtime.getURL("/blocked.html") +
+          browser.runtime.getURL('/blocked.html') +
           `?url=${encodeURIComponent(details.url)}` +
-          (blockedWord ? `&word=${encodeURIComponent(blockedWord)}` : "");
+          (blockedWord ? `&word=${encodeURIComponent(blockedWord)}` : '');
 
         await browser.tabs.update(details.tabId, {
-          url: "https://www.goodreads.com/quotes/tag/positive-affirmations",
+          url: 'https://www.goodreads.com/quotes/tag/positive-affirmations',
         });
       }
     } catch (error) {
-      console.error("Error checking blocked sites:", error);
+      console.error('Error checking blocked sites:', error);
     }
   });
 
   // Listen for messages from popup/options/blocked page
   browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    console.log("Message received in background:", message);
+    console.log('Message received in background:', message);
 
-    if (message.action === "openOptions") {
+    if (message.action === 'openOptions') {
       // Open the extension options page
       browser.runtime.openOptionsPage();
       sendResponse({ success: true });
       return true; // Keep the message channel open for async response
     }
 
-    if (message.type === "refreshBlocklist") {
+    if (message.type === 'refreshBlocklist') {
       // This forces the background script to re-check the blocklist
-      console.log("Blocklist refresh requested");
+      console.log('Blocklist refresh requested');
       sendResponse({ success: true });
       return true; // Keep the message channel open for async response
     }

@@ -1,5 +1,6 @@
 import { db as blockedSitesDb } from '@/db/blocked-sites-db';
 import { db as blockedWordsDb } from '@/db/blocked-words-db';
+import { getSettings } from '@/db/settings-db';
 
 export default defineBackground(() => {
   // Listen for navigation events
@@ -76,14 +77,13 @@ export default defineBackground(() => {
           }
         }
 
-        // Redirect to our custom block page with URL and reason parameters
-        const blockedPageUrl =
-          browser.runtime.getURL('/blocked.html') +
-          `?url=${encodeURIComponent(details.url)}` +
-          (blockedWord ? `&word=${encodeURIComponent(blockedWord)}` : '');
+        // Get custom redirection URL from settings
+        const settings = await getSettings();
+        const redirectionUrl = settings.customRedirectionUrl;
 
+        // Redirect to the custom redirection URL
         await browser.tabs.update(details.tabId, {
-          url: 'https://www.goodreads.com/quotes/tag/positive-affirmations',
+          url: redirectionUrl,
         });
       }
     } catch (error) {

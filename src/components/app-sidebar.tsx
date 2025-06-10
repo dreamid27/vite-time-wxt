@@ -1,30 +1,20 @@
-import * as React from "react";
+import * as React from 'react';
 import {
   IconCamera,
-  IconChartBar,
   IconDashboard,
-  IconDatabase,
   IconFileAi,
   IconFileDescription,
-  IconFileWord,
-  IconFolder,
   IconHelp,
-  IconInnerShadowTop,
   IconListDetails,
-  IconReport,
   IconSearch,
   IconSettings,
-  IconUsers,
-} from "@tabler/icons-react";
+} from '@tabler/icons-react';
 
-import { NavDocuments } from "@/components/nav-documents";
-import { NavMain } from "@/components/nav-main";
-import { NavSecondary } from "@/components/nav-secondary";
-import { NavUser } from "@/components/nav-user";
-import { Button } from "@/components/ui/button";
-import { MessageSquareText, Sparkles } from "lucide-react";
-import { motion } from "framer-motion";
-import { cn } from "@/lib/utils";
+import { NavMain } from '@/components/nav-main';
+import { Button } from '@/components/ui/button';
+import { MessageSquareText, Sparkles } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { cn } from '@/lib/utils';
 import {
   Sidebar,
   SidebarContent,
@@ -33,89 +23,94 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar";
-import logo from "@/assets/logo_horizontal.png";
+} from '@/components/ui/sidebar';
+import logo from '@/assets/logo_horizontal.png';
 
 const data = {
   user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
+    name: 'shadcn',
+    email: 'm@example.com',
+    avatar: '/avatars/shadcn.jpg',
   },
   navMain: [
     {
-      title: "Blocked Sites",
-      id: "blocked-sites",
+      title: 'Blocked Sites',
+      id: 'blocked-sites',
       icon: IconDashboard,
     },
     {
-      title: "Blocked Words",
-      id: "blocked-words",
+      title: 'Blocked Words',
+      id: 'blocked-words',
       icon: IconListDetails,
+    },
+    {
+      title: 'Settings',
+      id: 'settings',
+      icon: IconSettings,
     },
   ],
   navClouds: [
     {
-      title: "Capture",
+      title: 'Capture',
       icon: IconCamera,
       isActive: true,
-      url: "#",
+      url: '#',
       items: [
         {
-          title: "Active Proposals",
-          url: "#",
+          title: 'Active Proposals',
+          url: '#',
         },
         {
-          title: "Archived",
-          url: "#",
+          title: 'Archived',
+          url: '#',
         },
       ],
     },
     {
-      title: "Proposal",
+      title: 'Proposal',
       icon: IconFileDescription,
-      url: "#",
+      url: '#',
       items: [
         {
-          title: "Active Proposals",
-          url: "#",
+          title: 'Active Proposals',
+          url: '#',
         },
         {
-          title: "Archived",
-          url: "#",
+          title: 'Archived',
+          url: '#',
         },
       ],
     },
     {
-      title: "Prompts",
+      title: 'Prompts',
       icon: IconFileAi,
-      url: "#",
+      url: '#',
       items: [
         {
-          title: "Active Proposals",
-          url: "#",
+          title: 'Active Proposals',
+          url: '#',
         },
         {
-          title: "Archived",
-          url: "#",
+          title: 'Archived',
+          url: '#',
         },
       ],
     },
   ],
   navSecondary: [
     {
-      title: "Settings",
-      url: "#",
+      title: 'Settings',
+      url: '#',
       icon: IconSettings,
     },
     {
-      title: "Get Help",
-      url: "#",
+      title: 'Get Help',
+      url: '#',
       icon: IconHelp,
     },
     {
-      title: "Search",
-      url: "#",
+      title: 'Search',
+      url: '#',
       icon: IconSearch,
     },
   ],
@@ -159,10 +154,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         >
           <div
             className={cn(
-              "relative overflow-hidden rounded-lg border p-4 shadow-sm transition-all duration-300",
-              "bg-gradient-to-br from-primary/5 to-primary/10",
-              "border-primary/20 hover:border-primary/30",
-              "hover:shadow-md hover:shadow-primary/5"
+              'relative overflow-hidden rounded-lg border p-4 shadow-sm transition-all duration-300',
+              'bg-gradient-to-br from-primary/5 to-primary/10',
+              'border-primary/20 hover:border-primary/30',
+              'hover:shadow-md hover:shadow-primary/5'
             )}
           >
             <div className="absolute -right-6 -top-6 h-24 w-24 rounded-full bg-primary/10"></div>
@@ -180,14 +175,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               </p>
               <Button
                 onClick={() =>
-                  window.open("https://forms.gle/nG2Uuyw23CCsxmjLA", "_blank")
+                  window.open('https://forms.gle/nG2Uuyw23CCsxmjLA', '_blank')
                 }
                 size="sm"
                 variant="outline"
                 className={cn(
-                  "group relative overflow-hidden border-primary/20 bg-background/80 text-xs font-medium",
-                  "hover:bg-primary/5 hover:text-foreground",
-                  "transition-all duration-300"
+                  'group relative overflow-hidden border-primary/20 bg-background/80 text-xs font-medium',
+                  'hover:bg-primary/5 hover:text-foreground',
+                  'transition-all duration-300'
                 )}
               >
                 <Sparkles className="mr-1.5 h-3.5 w-3.5 group-hover:scale-110 group-hover:text-primary transition-transform" />
@@ -209,9 +204,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             target="_blank"
             rel="noopener noreferrer"
             className={cn(
-              "flex items-center gap-3 rounded-lg border p-3 text-sm transition-all duration-300",
-              "border-border/50 bg-background/80 hover:bg-accent/50",
-              "hover:shadow-sm hover:shadow-primary/5"
+              'flex items-center gap-3 rounded-lg border p-3 text-sm transition-all duration-300',
+              'border-border/50 bg-background/80 hover:bg-accent/50',
+              'hover:shadow-sm hover:shadow-primary/5'
             )}
           >
             <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-md bg-primary text-white">
@@ -232,8 +227,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               </svg>
             </div>
             <div className="flex-1 min-w-0">
-              <p className="font-medium text-foreground truncate">Blockie Website</p>
-              <p className="text-xs text-muted-foreground truncate">Visit our website</p>
+              <p className="font-medium text-foreground truncate">
+                Blockie Website
+              </p>
+              <p className="text-xs text-muted-foreground truncate">
+                Visit our website
+              </p>
             </div>
             <svg
               xmlns="http://www.w3.org/2000/svg"

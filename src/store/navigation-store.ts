@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-export type Page = 'blocked-sites' | 'blocked-words';
+export type Page = 'blocked-sites' | 'blocked-words' | 'settings';
 
 interface NavigationState {
   currentPage: Page;
